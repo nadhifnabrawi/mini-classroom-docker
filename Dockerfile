@@ -1,20 +1,17 @@
-# Dockerfile
-
 FROM php:8.2-apache
 
-# Install ekstensi
-RUN docker-php-ext-install pdo pdo_pgsql
+# 1. Install dependency untuk PostgreSQL
+RUN apt-get update && apt-get install -y libpq-dev && \
+    docker-php-ext-install pdo pdo_pgsql
 
-# Salin kode ke dalam container
+# 2. Copy project ke dalam container
 COPY ./src /var/www/html
 
-# Ubah permission agar apache bisa akses
+# 3. Ubah permission
 RUN chown -R www-data:www-data /var/www/html
 
-# Aktifkan rewrite module (jika pakai .htaccess)
+# 4. Aktifkan mod_rewrite (jika perlu)
 RUN a2enmod rewrite
 
-# Salin konfigurasi apache (jika ada)
-# COPY ./apache.conf /etc/apache2/sites-available/000-default.conf
-
+# 5. Expose port 80
 EXPOSE 80
