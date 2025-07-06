@@ -34,12 +34,13 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
         $db->bind(':password', $hashed_password);
         $db->bind(':role', $role);
 
-        if ($db->execute()) {
+                if ($db->execute()) {
             $_SESSION['success'] = "Registrasi berhasil. Silakan login.";
             header("Location: login.php");
             exit;
         } else {
-            $_SESSION['error'] = "Terjadi kesalahan saat registrasi.";
+            $errorInfo = $db->stmt->errorInfo();
+            $_SESSION['error'] = "Terjadi kesalahan saat registrasi: " . $errorInfo[2];
         }
     } else {
         $_SESSION['error'] = "Semua field wajib diisi.";
