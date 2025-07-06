@@ -10,13 +10,15 @@ class Database {
     private $stmt;
 
     public function __construct() {
-        $this->host = getenv('DB_HOST');
-        $this->port = getenv('DB_PORT') ?: 5432;
-        $this->user = getenv('DB_USER');
-        $this->pass = getenv('DB_PASSWORD');
-        $this->dbname = getenv('DB_NAME');
+    $url = getenv('DATABASE_URL');
+    if (!$url) {
+        die("DATABASE_URL not set.");
+    }
 
-        $dsn = "pgsql:host={$this->host};port={$this->port};dbname={$this->dbname}";
+    $dbopts = parse_url($url);
+    $dsn = "pgsql:host={$dbopts['host']};port={$dbopts['port']};dbname=" . ltrim($dbopts['path'], '/');
+    $this->user = $dbopts['user'];
+    $this->pass = $dbopts['pass'];
         $options = [
             PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
             PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC,
